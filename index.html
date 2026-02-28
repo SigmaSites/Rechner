@@ -6,218 +6,396 @@
 <title>Taschenrechner</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#08080a;--surface:#111115;--surface2:#18181f;--border:#2e2e3e;--accent:#e8ff47;--accent2:#ff6b35;--accent3:#47b8ff;--accent4:#b47fff;--text:#ffffff;--muted:#a0a0be}
-html,body{width:100%;height:100%;background:var(--bg);font-family:'JetBrains Mono',monospace;color:var(--text);overflow:hidden}
-body{display:flex;flex-direction:column;height:100vh}
-.tab-bar{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;order:2}
-.tab{flex:1;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Syne',sans-serif;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;border-top:2px solid transparent;background:none;touch-action:manipulation}
-.tab .icon{font-size:18px}
-.tab.active{color:var(--accent);border-top-color:var(--accent)}
-.pages{flex:1;order:1;overflow:hidden;position:relative}
-.page{position:absolute;top:0;left:0;right:0;bottom:0;flex-direction:column;display:none}
-.page.active{display:flex}
-.display{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:12px 20px 10px;border-bottom:1px solid var(--border)}
-.display-history{font-size:13px;color:var(--muted);text-align:right;min-height:18px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.display-main{font-size:clamp(36px,12vw,56px);font-weight:300;text-align:right;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.display-main.error{color:var(--accent2)}
-.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);flex-shrink:0}
-.btn{background:var(--surface);border:none;height:72px;font-family:'JetBrains Mono',monospace;font-size:clamp(16px,4.5vw,22px);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
-.btn:active{background:var(--surface2)}
-.btn.fn{color:var(--muted);font-size:clamp(13px,3.5vw,17px)}
-.btn.op{color:var(--accent);font-size:clamp(18px,5vw,26px)}
-.btn.eq{background:var(--accent);color:#000;font-weight:700}
-.btn.eq:active{background:#cde82f}
-.btn.zero{grid-column:span 2}
-.btn.clr{color:var(--accent2)}
-.scroll-page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px;display:flex;flex-direction:column;gap:12px}
-.section-title{font-family:'Syne',sans-serif;font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-.field-label{font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
-.field-hint{font-size:10px;color:var(--muted);margin-top:4px}
-input[type=text],input[type=number]{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;padding:10px 14px;border-radius:8px;outline:none;-webkit-appearance:none;appearance:none}
-input:focus{border-color:var(--accent)}
-.action-btn{background:var(--accent);color:#000;border:none;border-radius:8px;padding:12px;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;width:100%;touch-action:manipulation}
-.action-btn:active{opacity:.8}
-.action-btn.purple{background:var(--accent4)}
-.rcard{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px}
-.rcard.c1{border-color:var(--accent)}.rcard.c2{border-color:var(--accent2)}.rcard.c3{border-color:var(--accent3)}.rcard.c4{border-color:var(--accent4)}.rcard.cerr{border-color:var(--accent2)}
-.rcard-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.rcard-value{font-size:22px;font-weight:600;color:var(--accent);line-height:1.2;word-break:break-all}
-.rcard.c2 .rcard-value{color:var(--accent2)}.rcard.c3 .rcard-value{color:var(--accent3)}.rcard.c4 .rcard-value{color:var(--accent4);font-size:16px}.rcard.cerr .rcard-value{color:var(--accent2);font-size:13px}
-.rcard-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.5}
-.cmp-row{display:flex;align-items:flex-end;gap:10px}
-.cmp-row .fw{flex:1}
-.sym-box{width:52px;height:44px;background:var(--surface2);border:2px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sym-box span{font-size:22px;font-weight:700;color:var(--muted)}
-.sym-box.lt{border-color:var(--accent3);background:rgba(71,184,255,.08)}.sym-box.gt{border-color:var(--accent2);background:rgba(255,107,53,.08)}.sym-box.eq2{border-color:var(--accent);background:rgba(232,255,71,.08)}
-.sym-box.lt span{color:var(--accent3)}.sym-box.gt span{color:var(--accent2)}.sym-box.eq2 span{color:var(--accent)}
-.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.terme-tabs{display:flex;gap:6px}
-.tt{flex:1;padding:8px 4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Syne',sans-serif;font-size:8px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;text-align:center;touch-action:manipulation}
-.tt.active{background:rgba(180,127,255,.12);border-color:var(--accent4);color:var(--accent4)}
-.tsec{display:none;flex-direction:column;gap:10px}
-.tsec.active{display:flex}
-.info-box{background:rgba(180,127,255,.07);border:1px solid rgba(180,127,255,.2);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--muted);line-height:1.6}
-.info-box strong{color:var(--accent4)}
-.eq-steps{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
-.eq-step{display:flex;align-items:baseline;gap:8px;font-size:13px}
-.eq-step-n{font-size:9px;color:var(--muted);min-width:16px}
-.eq-step-t{color:var(--text);flex:1;word-break:break-all}
-.eq-step-t.hi{color:var(--accent4);font-weight:600}
-.divider{height:1px;background:var(--border);margin:2px 0}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #08080a; --surface: #111115; --surface2: #18181f; --border: #2e2e3e;
+  --accent: #e8ff47; --accent2: #ff6b35; --accent3: #47b8ff; --accent4: #b47fff;
+  --text: #ffffff; --muted: #a0a0be;
+}
+html, body { height: 100%; }
+body {
+  display: flex; flex-direction: column;
+  height: 100dvh;
+  background: var(--bg); font-family: 'JetBrains Mono', monospace;
+  color: var(--text); overflow: hidden;
+}
+
+/* TAB BAR */
+.tab-bar {
+  display: flex; flex-shrink: 0;
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 2px 6px; border: none; border-top: 2px solid transparent;
+  background: none; color: var(--muted);
+  font-family: 'Syne', sans-serif; font-size: 8px; font-weight: 800;
+  letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.tab .icon { font-size: 17px; line-height: 1; }
+.tab.active { color: var(--accent); border-top-color: var(--accent); }
+
+/* PAGES */
+.pages { flex: 1; min-height: 0; position: relative; }
+.page { position: absolute; inset: 0; display: none; flex-direction: column; }
+.page.active { display: flex; }
+
+/* CALCULATOR */
+.display {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 10px 18px 8px;
+  border-bottom: 1px solid var(--border); overflow: hidden;
+}
+.display-history {
+  font-size: 13px; color: var(--muted); text-align: right;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
+}
+.display-main {
+  font-size: clamp(32px, 10vw, 54px); font-weight: 300; text-align: right;
+  letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.display-main.error { color: var(--accent2); }
+
+/* Button grid fills the bottom 60% of the calc page */
+.buttons {
+  flex-shrink: 0; height: 60%;
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr);
+  gap: 1px; background: var(--border);
+}
+.btn {
+  background: var(--surface); border: none;
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(15px, 4vw, 22px);
+  color: var(--text); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.btn:active { background: var(--surface2); }
+.btn.fn { color: var(--muted); font-size: clamp(12px, 3.2vw, 17px); }
+.btn.op { color: var(--accent); font-size: clamp(17px, 4.5vw, 25px); }
+.btn.eq { background: var(--accent); color: #000; font-weight: 700; }
+.btn.eq:active { background: #cde82f; }
+.btn.zero { grid-column: span 2; }
+.btn.clr { color: var(--accent2); }
+
+/* SCROLL PAGES */
+.scroll-page {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.section-title { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.field-label { font-size: 9px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+.field-hint { font-size: 10px; color: var(--muted); margin-top: 4px; }
+input[type="text"], input[type="number"] {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  padding: 10px 14px; border-radius: 8px; outline: none; -webkit-appearance: none;
+}
+input:focus { border-color: var(--accent); }
+.action-btn {
+  background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 12px;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer; width: 100%;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.action-btn:active { opacity: 0.8; }
+.action-btn.purple { background: var(--accent4); }
+.rcard { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+.rcard.c1 { border-color: var(--accent); }
+.rcard.c2 { border-color: var(--accent2); }
+.rcard.c3 { border-color: var(--accent3); }
+.rcard.c4 { border-color: var(--accent4); }
+.rcard-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.rcard-value { font-size: 22px; font-weight: 600; color: var(--accent); line-height: 1.2; word-break: break-all; }
+.rcard.c2 .rcard-value { color: var(--accent2); }
+.rcard.c3 .rcard-value { color: var(--accent3); }
+.rcard.c4 .rcard-value { color: var(--accent4); font-size: 18px; }
+.rcard-sub { font-size: 10px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+/* COMPARE */
+.cmp-row { display: flex; align-items: flex-end; gap: 10px; }
+.cmp-row .fw { flex: 1; }
+.sym-box { width: 52px; height: 44px; background: var(--surface2); border: 2px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sym-box span { font-size: 22px; font-weight: 700; color: var(--muted); }
+.sym-box.lt { border-color: var(--accent3); } .sym-box.lt span { color: var(--accent3); }
+.sym-box.gt { border-color: var(--accent2); } .sym-box.gt span { color: var(--accent2); }
+.sym-box.eq { border-color: var(--accent); }  .sym-box.eq span { color: var(--accent); }
+.cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* TERME */
+.terme-tabs { display: flex; gap: 6px; }
+.ttab {
+  flex: 1; padding: 8px 4px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 8px;
+  font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; text-align: center;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.ttab.active { background: rgba(180,127,255,0.12); border-color: var(--accent4); color: var(--accent4); }
+.tsec { display: none; flex-direction: column; gap: 10px; }
+.tsec.active { display: flex; }
+.info-box { background: rgba(180,127,255,0.07); border: 1px solid rgba(180,127,255,0.2); border-radius: 8px; padding: 10px 12px; font-size: 10px; color: var(--muted); line-height: 1.6; }
+.info-box strong { color: var(--accent4); }
+.eq-steps { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.eq-step { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+.eq-step-n { font-size: 9px; color: var(--muted); min-width: 16px; }
+.eq-step-t { color: var(--text); flex: 1; word-break: break-all; }
+.eq-step-t.hi { color: var(--accent4); font-weight: 600; }
+.divider { height: 1px; background: var(--border); margin: 2px 0; }
 </style>
 </head>
 <body>
+
 <div class="pages">
+
+  <!-- RECHNER -->
   <div class="page active" id="page-calc">
     <div class="display">
       <div class="display-history" id="history"></div>
       <div class="display-main" id="displayMain">0</div>
     </div>
-    <div class="buttons">
-      <button class="btn fn clr" onclick="clearAll()">AC</button>
-      <button class="btn fn" onclick="toggleSign()">+/−</button>
-      <button class="btn fn" onclick="percent()">%</button>
-      <button class="btn op" onclick="setOp('/')">÷</button>
-      <button class="btn" onclick="inp('7')">7</button>
-      <button class="btn" onclick="inp('8')">8</button>
-      <button class="btn" onclick="inp('9')">9</button>
-      <button class="btn op" onclick="setOp('*')">×</button>
-      <button class="btn" onclick="inp('4')">4</button>
-      <button class="btn" onclick="inp('5')">5</button>
-      <button class="btn" onclick="inp('6')">6</button>
-      <button class="btn op" onclick="setOp('-')">−</button>
-      <button class="btn" onclick="inp('1')">1</button>
-      <button class="btn" onclick="inp('2')">2</button>
-      <button class="btn" onclick="inp('3')">3</button>
-      <button class="btn op" onclick="setOp('+')">+</button>
-      <button class="btn zero" onclick="inp('0')">0</button>
-      <button class="btn" onclick="inpDot()">.</button>
-      <button class="btn eq" onclick="calculate()">=</button>
+    <div class="buttons" id="calcButtons">
+      <button class="btn fn clr" data-a="clearAll">AC</button>
+      <button class="btn fn"     data-a="toggleSign">+/&#8722;</button>
+      <button class="btn fn"     data-a="percent">%</button>
+      <button class="btn op"     data-a="op:/">&#247;</button>
+      <button class="btn"        data-a="num:7">7</button>
+      <button class="btn"        data-a="num:8">8</button>
+      <button class="btn"        data-a="num:9">9</button>
+      <button class="btn op"     data-a="op:*">&#215;</button>
+      <button class="btn"        data-a="num:4">4</button>
+      <button class="btn"        data-a="num:5">5</button>
+      <button class="btn"        data-a="num:6">6</button>
+      <button class="btn op"     data-a="op:-">&#8722;</button>
+      <button class="btn"        data-a="num:1">1</button>
+      <button class="btn"        data-a="num:2">2</button>
+      <button class="btn"        data-a="num:3">3</button>
+      <button class="btn op"     data-a="op:+">+</button>
+      <button class="btn zero"   data-a="num:0">0</button>
+      <button class="btn"        data-a="dot">.</button>
+      <button class="btn eq"     data-a="calc">=</button>
     </div>
   </div>
 
+  <!-- STATISTIK -->
   <div class="page" id="page-stats">
     <div class="scroll-page">
       <div class="section-title">Statistische Auswertung</div>
       <div>
         <div class="field-label">Zahlenreihe</div>
         <input type="text" id="statInput" placeholder="z.B. 3, 7, 7, 2, 9">
-        <div class="field-hint">Komma oder Leerzeichen trennen</div>
+        <div class="field-hint">Komma oder Leerzeichen &middot; Enter zum Berechnen</div>
       </div>
-      <button class="action-btn" onclick="calcStats()">Berechnen</button>
-      <div class="rcard c1"><div class="rcard-label">Mittelwert</div><div class="rcard-value" id="valMean">—</div><div class="rcard-sub" id="subMean">Summe ÷ Anzahl</div></div>
-      <div class="rcard c2"><div class="rcard-label">Modalwert (Modus)</div><div class="rcard-value" id="valModal">—</div><div class="rcard-sub" id="subModal">Am häufigsten vorkommend</div></div>
-      <div class="rcard c3"><div class="rcard-label">Median</div><div class="rcard-value" id="valMedian">—</div><div class="rcard-sub" id="subMedian">Mittlerer Wert der sortierten Reihe</div></div>
+      <button class="action-btn" id="btnStats">Berechnen</button>
+      <div class="rcard c1">
+        <div class="rcard-label">Durchschnitt (Mittelwert)</div>
+        <div class="rcard-value" id="valMean">&#8212;</div>
+        <div class="rcard-sub" id="subMean">Summe &divide; Anzahl</div>
+      </div>
+      <div class="rcard c2">
+        <div class="rcard-label">Modalwert (Modus)</div>
+        <div class="rcard-value" id="valModal">&#8212;</div>
+        <div class="rcard-sub" id="subModal">Am h&auml;ufigsten vorkommend</div>
+      </div>
+      <div class="rcard c3">
+        <div class="rcard-label">Zentralwert (Median)</div>
+        <div class="rcard-value" id="valMedian">&#8212;</div>
+        <div class="rcard-sub" id="subMedian">Mittlerer Wert der sortierten Reihe</div>
+      </div>
     </div>
   </div>
 
+  <!-- VERGLEICHEN -->
   <div class="page" id="page-compare">
     <div class="scroll-page">
       <div class="section-title">Zahlen Vergleichen</div>
       <div class="cmp-row">
-        <div class="fw"><div class="field-label">Zahl A</div><input type="number" id="cmpA" placeholder="42" oninput="doCompare()"></div>
+        <div class="fw">
+          <div class="field-label">Zahl A</div>
+          <input type="number" id="cmpA" placeholder="42">
+        </div>
         <div class="sym-box" id="cmpSymbol"><span id="cmpIcon">?</span></div>
-        <div class="fw"><div class="field-label">Zahl B</div><input type="number" id="cmpB" placeholder="99" oninput="doCompare()"></div>
+        <div class="fw">
+          <div class="field-label">Zahl B</div>
+          <input type="number" id="cmpB" placeholder="99">
+        </div>
       </div>
-      <div class="rcard" id="cmpResultCard"><div class="rcard-value" id="cmpResult" style="font-size:15px;color:var(--muted)">Gib zwei Zahlen ein</div></div>
+      <button class="action-btn" id="btnCompare">Vergleichen</button>
+      <div class="rcard" id="cmpResultCard">
+        <div class="rcard-value" id="cmpResult" style="color:var(--muted);font-size:15px">Gib zwei Zahlen ein</div>
+      </div>
       <div class="cmp-grid" id="cmpExtra" style="display:none">
-        <div class="rcard"><div class="rcard-label">Differenz (A−B)</div><div class="rcard-value" id="cmpDiff">—</div></div>
-        <div class="rcard"><div class="rcard-label">Verhältnis (A÷B)</div><div class="rcard-value" id="cmpRatio" style="color:var(--accent3)">—</div></div>
-        <div class="rcard"><div class="rcard-label">% Unterschied</div><div class="rcard-value" id="cmpPct" style="color:var(--accent2)">—</div></div>
-        <div class="rcard"><div class="rcard-label">Größerer Wert</div><div class="rcard-value" id="cmpMax">—</div></div>
+        <div class="rcard c1"><div class="rcard-label">Differenz A&#8722;B</div><div class="rcard-value" id="cmpDiff">&#8212;</div></div>
+        <div class="rcard c3"><div class="rcard-label">Verh&auml;ltnis A&divide;B</div><div class="rcard-value" id="cmpRatio">&#8212;</div></div>
+        <div class="rcard c2"><div class="rcard-label">% Unterschied</div><div class="rcard-value" id="cmpPct">&#8212;</div></div>
+        <div class="rcard c1"><div class="rcard-label">Gr&ouml;&szlig;erer Wert</div><div class="rcard-value" id="cmpMax">&#8212;</div></div>
       </div>
     </div>
   </div>
 
+  <!-- TERME -->
   <div class="page" id="page-terme">
     <div class="scroll-page">
       <div class="section-title">Terme &amp; Gleichungen</div>
       <div class="terme-tabs">
-        <button class="tt active" id="tt0" onclick="switchTT(0)">Zusammenfassen</button>
-        <button class="tt" id="tt1" onclick="switchTT(1)">Gleichung lösen</button>
-        <button class="tt" id="tt2" onclick="switchTT(2)">Termwert</button>
+        <button class="ttab active" id="ttab-z">Zusammenfassen</button>
+        <button class="ttab" id="ttab-l">Gleichung</button>
+        <button class="ttab" id="ttab-t">Termwert</button>
       </div>
-      <div class="tsec active" id="ts0">
-        <div class="info-box"><strong>Terme zusammenfassen</strong><br>Gleiche Variablen addieren/subtrahieren.<br>Bsp: <strong>3x + 2x − x + 5 − 2</strong> → <strong>4x + 3</strong></div>
-        <div><div class="field-label">Term eingeben</div><input type="text" id="tfInput" placeholder="z.B. 3x + 2x - x + 5 - 2"><div class="field-hint">Variablen a–z · Koeffizient direkt vor Variable</div></div>
-        <button class="action-btn purple" onclick="doZusammenfassen()">Zusammenfassen</button>
-        <div id="tfResult" style="display:none" class="rcard c4"><div class="rcard-label">Vereinfachter Term</div><div class="rcard-value" id="tfVal">—</div><div class="rcard-sub" id="tfSub"></div></div>
-        <div id="tfSteps" class="eq-steps" style="display:none"></div>
+      <div class="tsec active" id="ts-z">
+        <div class="info-box"><strong>Terme zusammenfassen</strong><br>z.B. <strong>3x + 2x &#8722; x + 5 &#8722; 2</strong> &rarr; <strong>4x + 3</strong></div>
+        <div>
+          <div class="field-label">Term eingeben</div>
+          <input type="text" id="tfInput" placeholder="z.B. 3x + 2x - x + 5 - 2">
+          <div class="field-hint">Variablen a&#8211;z &middot; Koeffizient direkt vor Variable</div>
+        </div>
+        <button class="action-btn purple" id="btnZusammen">Zusammenfassen</button>
+        <div class="rcard c4" id="tfResult" style="display:none">
+          <div class="rcard-label">Vereinfachter Term</div>
+          <div class="rcard-value" id="tfVal">&#8212;</div>
+          <div class="rcard-sub" id="tfSub"></div>
+        </div>
+        <div class="eq-steps" id="tfSteps" style="display:none"></div>
       </div>
-      <div class="tsec" id="ts1">
-        <div class="info-box"><strong>Lineare Gleichung lösen</strong><br>Forme nach der Variablen um.<br>Bsp: <strong>2x + 4 = 10</strong> → <strong>x = 3</strong></div>
-        <div><div class="field-label">Gleichung eingeben</div><input type="text" id="eqInput" placeholder="z.B. 2x + 4 = 10"><div class="field-hint">Form: ax + b = c  oder  ax + b = cx + d</div></div>
-        <button class="action-btn purple" onclick="doLoesen()">Lösen</button>
-        <div id="eqResult" style="display:none" class="rcard c4"><div class="rcard-label">Lösung</div><div class="rcard-value" id="eqVal">—</div><div class="rcard-sub" id="eqSub"></div></div>
-        <div id="eqSteps" class="eq-steps" style="display:none"></div>
+      <div class="tsec" id="ts-l">
+        <div class="info-box"><strong>Lineare Gleichung l&ouml;sen</strong><br>z.B. <strong>2x + 4 = 10</strong> &rarr; <strong>x = 3</strong></div>
+        <div>
+          <div class="field-label">Gleichung (eine Variable)</div>
+          <input type="text" id="eqInput" placeholder="z.B. 2x + 4 = 10">
+          <div class="field-hint">Form: ax + b = c &nbsp;oder&nbsp; ax + b = cx + d</div>
+        </div>
+        <button class="action-btn purple" id="btnLoesen">L&ouml;sen</button>
+        <div class="rcard c4" id="eqResult" style="display:none">
+          <div class="rcard-label">L&ouml;sung</div>
+          <div class="rcard-value" id="eqVal">&#8212;</div>
+          <div class="rcard-sub" id="eqSub"></div>
+        </div>
+        <div class="eq-steps" id="eqSteps" style="display:none"></div>
       </div>
-      <div class="tsec" id="ts2">
-        <div class="info-box"><strong>Termwert berechnen</strong><br>Term definieren und Variablenwerte einsetzen.<br>Bsp: <strong>2*x^2 + 3*y - 1</strong> mit x=3, y=2 → <strong>23</strong></div>
-        <div><div class="field-label">Term definieren</div><input type="text" id="tvTerm" placeholder="z.B. 2*x^2 + 3*y - 1" oninput="detectVars()"><div class="field-hint">Potenz: x^2 · Multiplikation: 2*x · Wurzel: sqrt(x)</div></div>
-        <div id="tvVarsBox" style="display:none"><div class="field-label">Variablenwerte</div><div id="tvVarInputs" style="display:flex;flex-direction:column;gap:8px"></div></div>
-        <button class="action-btn purple" onclick="doTermwert()">Termwert berechnen</button>
-        <div id="tvResult" style="display:none" class="rcard c4"><div class="rcard-label">Termwert</div><div class="rcard-value" id="tvVal">—</div><div class="rcard-sub" id="tvSub"></div></div>
+      <div class="tsec" id="ts-t">
+        <div class="info-box"><strong>Term definieren &amp; Termwert berechnen</strong><br>z.B. <strong>2*x^2 + 3*y &#8722; 1</strong> mit x=3, y=2 &rarr; <strong>23</strong></div>
+        <div>
+          <div class="field-label">Term definieren</div>
+          <input type="text" id="tvTerm" placeholder="z.B. 2*x^2 + 3*y - 1">
+          <div class="field-hint">Potenz: x^2 &middot; Multiplikation: 2*x &middot; Wurzel: sqrt(x)</div>
+        </div>
+        <div id="tvVarsBox" style="display:none">
+          <div class="field-label">Variablenwerte</div>
+          <div id="tvVarInputs" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+        <button class="action-btn purple" id="btnTermwert">Termwert berechnen</button>
+        <div class="rcard c4" id="tvResult" style="display:none">
+          <div class="rcard-label">Termwert</div>
+          <div class="rcard-value" id="tvVal">&#8212;</div>
+          <div class="rcard-sub" id="tvSub"></div>
+        </div>
       </div>
     </div>
   </div>
+
 </div>
 
 <div class="tab-bar">
-  <button class="tab active" id="tab-calc" onclick="switchTab('calc')"><span class="icon">🔢</span>Rechner</button>
-  <button class="tab" id="tab-stats" onclick="switchTab('stats')"><span class="icon">📊</span>Statistik</button>
-  <button class="tab" id="tab-compare" onclick="switchTab('compare')"><span class="icon">⚖️</span>Vergleichen</button>
-  <button class="tab" id="tab-terme" onclick="switchTab('terme')"><span class="icon">🔣</span>Terme</button>
+  <button class="tab active" id="tab-calc"><span class="icon">&#128178;</span>Rechner</button>
+  <button class="tab" id="tab-stats"><span class="icon">&#128202;</span>Statistik</button>
+  <button class="tab" id="tab-compare"><span class="icon">&#9878;</span>Vergleichen</button>
+  <button class="tab" id="tab-terme"><span class="icon">&#128291;</span>Terme</button>
 </div>
 
 <script>
-function switchTab(t){['calc','stats','compare','terme'].forEach(function(id){document.getElementById('tab-'+id).classList.toggle('active',id===t);document.getElementById('page-'+id).classList.toggle('active',id===t);})}
-function switchTT(i){[0,1,2].forEach(function(j){document.getElementById('tt'+j).classList.toggle('active',j===i);document.getElementById('ts'+j).classList.toggle('active',j===i);})}
+(function(){
+'use strict';
 
-var cur='0',prv='',op=null,fresh=false;
-function updateDisp(v){var d=document.getElementById('displayMain');d.classList.remove('error');d.textContent=v}
-function inp(d){if(fresh){cur=d;fresh=false;}else cur=cur==='0'?d:cur+d;updateDisp(cur)}
-function inpDot(){if(fresh){cur='0.';fresh=false;}else if(!cur.includes('.'))cur+='.';updateDisp(cur)}
-function clearAll(){cur='0';prv='';op=null;fresh=false;document.getElementById('history').textContent='';updateDisp('0')}
-function toggleSign(){cur=String(-parseFloat(cur));updateDisp(cur)}
-function percent(){cur=String(parseFloat(cur)/100);updateDisp(cur)}
-function setOp(o){if(op&&!fresh)calculate(true);prv=cur;op=o;fresh=true;var s={'/':'÷','*':'×','-':'−','+':'+'};document.getElementById('history').textContent=prv+' '+s[o]}
-function calculate(chain){
-  if(!op||!prv)return;
-  var a=parseFloat(prv),b=parseFloat(cur),res;
-  if(op==='+')res=a+b;else if(op==='-')res=a-b;else if(op==='*')res=a*b;else if(op==='/')res=b===0?'Fehler':a/b;
-  var s={'/':'÷','*':'×','-':'−','+':'+'};
-  if(!chain)document.getElementById('history').textContent=prv+' '+s[op]+' '+cur+' =';
-  if(res==='Fehler'){var d=document.getElementById('displayMain');d.classList.add('error');d.textContent='Fehler';op=null;prv='';cur='0';fresh=true;return}
-  res=parseFloat(res.toPrecision(12));cur=String(res);fresh=true;op=null;updateDisp(cur)
+// MAIN TABS
+var MT=['calc','stats','compare','terme'];
+MT.forEach(function(id){
+  document.getElementById('tab-'+id).addEventListener('click',function(){
+    MT.forEach(function(t){
+      document.getElementById('tab-'+t).classList.toggle('active',t===id);
+      document.getElementById('page-'+t).classList.toggle('active',t===id);
+    });
+  });
+});
+
+// TERME SUB-TABS
+var TP=[['ttab-z','ts-z'],['ttab-l','ts-l'],['ttab-t','ts-t']];
+TP.forEach(function(pair){
+  document.getElementById(pair[0]).addEventListener('click',function(){
+    TP.forEach(function(p){
+      document.getElementById(p[0]).classList.toggle('active',p===pair);
+      document.getElementById(p[1]).classList.toggle('active',p===pair);
+    });
+  });
+});
+
+// CALCULATOR
+var cur='0',prev='',op=null,fresh=false;
+var disp=document.getElementById('displayMain');
+var hist=document.getElementById('history');
+function upd(v){disp.classList.remove('error');disp.textContent=v;}
+function numIn(d){if(fresh){cur=d;fresh=false;}else{cur=cur==='0'?d:cur+d;}upd(cur);}
+function dotIn(){if(fresh){cur='0.';fresh=false;}else if(cur.indexOf('.')===-1){cur+='.'}upd(cur);}
+function clearAll(){cur='0';prev='';op=null;fresh=false;hist.textContent='';upd('0');}
+function toggleSign(){cur=String(-parseFloat(cur));upd(cur);}
+function pct(){cur=String(parseFloat(cur)/100);upd(cur);}
+var sym={'/':'÷','*':'×','-':'−','+':'+'};
+function setOp(o){if(op&&!fresh)calc(true);prev=cur;op=o;fresh=true;hist.textContent=prev+' '+sym[o];}
+function calc(chain){
+  if(!op||!prev)return;
+  var a=parseFloat(prev),b=parseFloat(cur),res;
+  if(op==='+')res=a+b;else if(op==='-')res=a-b;else if(op==='*')res=a*b;else res=b===0?'E':a/b;
+  if(!chain)hist.textContent=prev+' '+sym[op]+' '+cur+' =';
+  if(res==='E'){disp.classList.add('error');disp.textContent='Fehler';op=null;prev='';cur='0';fresh=true;return;}
+  cur=String(parseFloat(res.toPrecision(12)));fresh=true;op=null;upd(cur);
 }
+document.getElementById('calcButtons').addEventListener('click',function(e){
+  var btn=e.target.closest('[data-a]');if(!btn)return;
+  var a=btn.getAttribute('data-a');
+  if(a.indexOf('num:')===0)numIn(a.slice(4));
+  else if(a.indexOf('op:')===0)setOp(a.slice(3));
+  else if(a==='dot')dotIn();
+  else if(a==='clearAll')clearAll();
+  else if(a==='toggleSign')toggleSign();
+  else if(a==='percent')pct();
+  else if(a==='calc')calc();
+});
 document.addEventListener('keydown',function(e){
   if(!document.getElementById('page-calc').classList.contains('active'))return;
-  if('0123456789'.includes(e.key))inp(e.key);
-  else if(e.key==='.')inpDot();
-  else if(e.key==='+')setOp('+');else if(e.key==='-')setOp('-');else if(e.key==='*')setOp('*');
-  else if(e.key==='/'){e.preventDefault();setOp('/');}
-  else if(e.key==='Enter'||e.key==='=')calculate();
-  else if(e.key==='Backspace'){cur=cur.length>1?cur.slice(0,-1):'0';updateDisp(cur)}
+  if('0123456789'.indexOf(e.key)!==-1)numIn(e.key);
+  else if(e.key==='.')dotIn();
+  else if(e.key==='+')setOp('+');else if(e.key==='-')setOp('-');
+  else if(e.key==='*')setOp('*');else if(e.key==='/'){e.preventDefault();setOp('/');}
+  else if(e.key==='Enter'||e.key==='=')calc();
+  else if(e.key==='Backspace'){if(cur.length>1)cur=cur.slice(0,-1);else cur='0';upd(cur);}
   else if(e.key==='Escape')clearAll();
 });
 
+function rnd(n){return parseFloat(n.toPrecision(10)).toString();}
+function showErr(cId,vId,sId,msg){var el=document.getElementById(cId);el.style.display='block';el.className='rcard c2';document.getElementById(vId).textContent='⚠ '+msg;document.getElementById(sId).textContent='';}
+
+// STATS
+document.getElementById('btnStats').addEventListener('click',calcStats);
+document.getElementById('statInput').addEventListener('keydown',function(e){if(e.key==='Enter')calcStats();});
 function calcStats(){
   var raw=document.getElementById('statInput').value.trim();if(!raw)return;
-  var nums=raw.split(/[\s,;]+/).map(function(s){return parseFloat(s.replace(',','.'));}).filter(function(n){return!isNaN(n);});if(!nums.length)return;
-  var sum=nums.reduce(function(a,b){return a+b;},0),mean=sum/nums.length;
-  document.getElementById('valMean').textContent=rnd(mean);document.getElementById('subMean').textContent='Summe '+rnd(sum)+' ÷ '+nums.length;
+  var nums=raw.split(/[\s,;]+/).map(function(s){return parseFloat(s.replace(',','.'));}).filter(function(n){return!isNaN(n);});
+  if(!nums.length)return;
+  var sum=nums.reduce(function(a,b){return a+b;},0);
+  document.getElementById('valMean').textContent=rnd(sum/nums.length);
+  document.getElementById('subMean').textContent='Summe '+rnd(sum)+' ÷ '+nums.length;
   var freq={};nums.forEach(function(n){freq[n]=(freq[n]||0)+1;});
-  var maxF=Math.max.apply(null,Object.values(freq)),modes=Object.keys(freq).filter(function(k){return freq[k]===maxF;}).map(Number);
+  var maxF=Math.max.apply(null,Object.keys(freq).map(function(k){return freq[k];}));
+  var modes=Object.keys(freq).filter(function(k){return freq[k]===maxF;}).map(Number);
   if(maxF===1){document.getElementById('valModal').textContent='Keiner';document.getElementById('subModal').textContent='Alle gleich häufig';}
   else{document.getElementById('valModal').textContent=modes.join(', ');document.getElementById('subModal').textContent='Erscheint '+maxF+'× in der Reihe';}
-  var sorted=nums.slice().sort(function(a,b){return a-b;}),mid=Math.floor(sorted.length/2),median;
-  if(sorted.length%2===0){median=(sorted[mid-1]+sorted[mid])/2;document.getElementById('subMedian').textContent='Mittel aus '+sorted[mid-1]+' und '+sorted[mid];}
-  else{median=sorted[mid];document.getElementById('subMedian').textContent='Pos. '+(mid+1)+' von '+sorted.length;}
-  document.getElementById('valMedian').textContent=rnd(median);
+  var s=nums.slice().sort(function(a,b){return a-b;}),mid=Math.floor(s.length/2),med;
+  if(s.length%2===0){med=(s[mid-1]+s[mid])/2;document.getElementById('subMedian').textContent='Mittel aus '+s[mid-1]+' und '+s[mid];}
+  else{med=s[mid];document.getElementById('subMedian').textContent='Pos. '+(mid+1)+' von '+s.length;}
+  document.getElementById('valMedian').textContent=rnd(med);
 }
-document.getElementById('statInput').addEventListener('keydown',function(e){if(e.key==='Enter')calcStats();});
 
+// COMPARE
+document.getElementById('btnCompare').addEventListener('click',doCompare);
 function doCompare(){
   var a=parseFloat(document.getElementById('cmpA').value),b=parseFloat(document.getElementById('cmpB').value);
   var box=document.getElementById('cmpSymbol'),icon=document.getElementById('cmpIcon'),res=document.getElementById('cmpResult'),extra=document.getElementById('cmpExtra');
@@ -230,95 +408,100 @@ function doCompare(){
   document.getElementById('cmpMax').textContent=rnd(Math.max(a,b));
   if(a<b){icon.textContent='<';box.classList.add('lt');res.textContent=rnd(a)+' ist kleiner als '+rnd(b);res.style.color='var(--accent3)';}
   else if(a>b){icon.textContent='>';box.classList.add('gt');res.textContent=rnd(a)+' ist größer als '+rnd(b);res.style.color='var(--accent2)';}
-  else{icon.textContent='=';box.classList.add('eq2');res.textContent=rnd(a)+' ist gleich '+rnd(b);res.style.color='var(--accent)';}
+  else{icon.textContent='=';box.classList.add('eq');res.textContent=rnd(a)+' ist gleich '+rnd(b);res.style.color='var(--accent)';}
 }
 
-function rnd(n){return parseFloat(n.toPrecision(10)).toString()}
-
-function doZusammenfassen(){
+// TERME ZUSAMMENFASSEN
+document.getElementById('btnZusammen').addEventListener('click',doZusammen);
+document.getElementById('tfInput').addEventListener('keydown',function(e){if(e.key==='Enter')doZusammen();});
+function doZusammen(){
   var raw=document.getElementById('tfInput').value.trim();if(!raw)return;
   try{
     var s=raw.replace(/\s+/g,'');if(s[0]!=='-')s='+'+s;
     var tokens=s.match(/[+\-][^+\-]*/g)||[],map={},steps=['Ausgangsterm: '+raw];
     for(var i=0;i<tokens.length;i++){
-      var tok=tokens[i],numM=tok.match(/^([+\-]?\d*\.?\d+)$/);
-      if(numM){map['__c']=(map['__c']||0)+parseFloat(numM[0]);continue;}
-      var varM=tok.match(/^([+\-]?)(\d*\.?\d*)\*?([a-z])$/i);
-      if(varM){var sign=varM[1]==='-'?-1:1,coeff=varM[2]===''||varM[2]==='.'?1:parseFloat(varM[2]),v=varM[3].toLowerCase();map[v]=(map[v]||0)+sign*coeff;steps.push(v+': '+(sign>0?'+':'')+sign*coeff);continue;}
-      throw new Error('Kann "'+tok.replace(/^[+]/,'')+'" nicht parsen.');
+      var tok=tokens[i];
+      var nM=tok.match(/^([+\-]?\d*\.?\d+)$/);
+      if(nM){map.__c=(map.__c||0)+parseFloat(nM[0]);continue;}
+      var vM=tok.match(/^([+\-]?)(\d*\.?\d*)\*?([a-z])$/i);
+      if(vM){var sg=vM[1]==='-'?-1:1,co=(vM[2]===''||vM[2]==='.')?1:parseFloat(vM[2]),v=vM[3].toLowerCase();map[v]=(map[v]||0)+sg*co;steps.push(v+': '+(sg>0?'+':'')+sg*co);continue;}
+      throw new Error('Kann "'+tok.replace(/^\+/,'')+'" nicht parsen.');
     }
-    var varKeys=Object.keys(map).filter(function(k){return k!=='__c';}).sort(),parts=[];
-    for(var i=0;i<varKeys.length;i++){var v=varKeys[i],c=map[v];if(c===0)continue;if(c===1)parts.push((parts.length>0?'+':'')+v);else if(c===-1)parts.push('-'+v);else parts.push((c>0&&parts.length>0?'+':'')+c+v);}
-    var cst=map['__c']||0;if(cst!==0)parts.push((cst>0&&parts.length>0?'+':'')+cst);
-    var result=parts.length?parts.join(' ').replace(/([+\-])/g,' $1 ').trim():'0';
-    document.getElementById('tfResult').style.display='block';document.getElementById('tfResult').className='rcard c4';
-    document.getElementById('tfVal').textContent=result;document.getElementById('tfSub').textContent=varKeys.map(function(v){return v+': Koeffizient '+map[v];}).join(' · ');
+    var vk=Object.keys(map).filter(function(k){return k!=='__c';}).sort(),parts=[];
+    vk.forEach(function(v){var c=map[v];if(c===0)return;if(c===1)parts.push((parts.length?'+':'')+v);else if(c===-1)parts.push('-'+v);else parts.push((c>0&&parts.length?'+':'')+c+v);});
+    var cst=map.__c||0;if(cst!==0)parts.push((cst>0&&parts.length?'+':'')+cst);
+    var result=parts.length?parts.join(' ').replace(/([+\-])/g,' $1 ').replace(/\s+/g,' ').trim():'0';
+    var rc=document.getElementById('tfResult');rc.style.display='block';rc.className='rcard c4';
+    document.getElementById('tfVal').textContent=result;
+    document.getElementById('tfSub').textContent=vk.map(function(v){return v+': '+map[v];}).join(' · ')+(cst?' · Konst: '+cst:'');
     var html=steps.map(function(s,i){return '<div class="eq-step"><span class="eq-step-n">'+(i+1)+'.</span><span class="eq-step-t">'+s+'</span></div>';}).join('');
     html+='<div class="divider"></div><div class="eq-step"><span class="eq-step-n">→</span><span class="eq-step-t hi">'+result+'</span></div>';
     var st=document.getElementById('tfSteps');st.style.display='flex';st.innerHTML=html;
   }catch(e){showErr('tfResult','tfVal','tfSub',e.message);document.getElementById('tfSteps').style.display='none';}
 }
 
+// TERME GLEICHUNG LÖSEN
+document.getElementById('btnLoesen').addEventListener('click',doLoesen);
+document.getElementById('eqInput').addEventListener('keydown',function(e){if(e.key==='Enter')doLoesen();});
+function parseSide(s){
+  s=s.replace(/\s+/g,'');if(s[0]!=='-')s='+'+s;
+  var tokens=s.match(/[+\-][^+\-]*/g)||[],vc=0,cc=0,vn=null;
+  for(var i=0;i<tokens.length;i++){
+    var tok=tokens[i],nM=tok.match(/^([+\-]?\d*\.?\d+)$/);
+    if(nM){cc+=parseFloat(nM[0]);continue;}
+    var vM=tok.match(/^([+\-]?)(\d*\.?\d*)\*?([a-z])$/i);
+    if(vM){var sg=vM[1]==='-'?-1:1,co=(vM[2]===''||vM[2]==='.')?1:parseFloat(vM[2]);vn=vM[3].toLowerCase();vc+=sg*co;continue;}
+    throw new Error('Kann "'+tok.replace(/^\+/,'')+'" nicht parsen.');
+  }
+  return{vc:vc,cc:cc,vn:vn||'x'};
+}
 function doLoesen(){
   var raw=document.getElementById('eqInput').value.trim();if(!raw)return;
   try{
-    var parts=raw.split('=');if(parts.length!==2)throw new Error('Bitte genau ein "=" eingeben.');
-    var L=parseSide(parts[0].trim()),R=parseSide(parts[1].trim()),vc=L.vc-R.vc,cst=R.cst-L.cst,vn=L.vn||R.vn||'x';
-    var steps=[{t:'Ausgangsgleichung: '+raw},{t:'Variable auf eine Seite: '+vc+vn+' = '+cst}];
-    if(vc===0)throw new Error(cst===0?'Unendlich viele Lösungen.':'Keine Lösung.');
-    var sol=cst/vc;steps.push({t:'÷ '+vc+' auf beiden Seiten',hi:true});steps.push({t:vn+' = '+rnd(sol),hi:true});
-    document.getElementById('eqResult').style.display='block';document.getElementById('eqResult').className='rcard c4';
-    document.getElementById('eqVal').textContent=vn+' = '+rnd(sol);document.getElementById('eqSub').textContent='Probe: '+rnd(L.vc*sol+L.cst)+' = '+rnd(R.vc*sol+R.cst);
+    var pts=raw.split('=');if(pts.length!==2)throw new Error('Genau ein "=" erforderlich.');
+    var L=parseSide(pts[0].trim()),R=parseSide(pts[1].trim()),vc=L.vc-R.vc,cc=R.cc-L.cc,vn=L.vn||R.vn;
+    var steps=[{t:'Ausgangsgleichung: '+raw},{t:'Variable auf eine Seite: '+vc+vn+' = '+cc}];
+    if(vc===0)throw new Error(cc===0?'Unendlich viele Lösungen.':'Keine Lösung.');
+    var sol=cc/vc;steps.push({t:'÷ '+vc+' auf beiden Seiten',hi:true});steps.push({t:vn+' = '+rnd(sol),hi:true});
+    var rc=document.getElementById('eqResult');rc.style.display='block';rc.className='rcard c4';
+    document.getElementById('eqVal').textContent=vn+' = '+rnd(sol);
+    document.getElementById('eqSub').textContent='Probe: '+rnd(L.vc*sol+L.cc)+' = '+rnd(R.vc*sol+R.cc);
     var st=document.getElementById('eqSteps');st.style.display='flex';
     st.innerHTML=steps.map(function(s,i){return '<div class="eq-step"><span class="eq-step-n">'+(i+1)+'.</span><span class="eq-step-t '+(s.hi?'hi':'')+'">'+s.t+'</span></div>';}).join('');
   }catch(e){showErr('eqResult','eqVal','eqSub',e.message);document.getElementById('eqSteps').style.display='none';}
 }
 
-function parseSide(s){
-  s=s.replace(/\s+/g,'');if(s[0]!=='-')s='+'+s;
-  var tokens=s.match(/[+\-][^+\-]*/g)||[],vc=0,cst=0,vn=null;
-  for(var i=0;i<tokens.length;i++){
-    var tok=tokens[i],numM=tok.match(/^([+\-]?\d*\.?\d+)$/);
-    if(numM){cst+=parseFloat(numM[0]);continue;}
-    var varM=tok.match(/^([+\-]?)(\d*\.?\d*)\*?([a-z])$/i);
-    if(varM){var sign=varM[1]==='-'?-1:1,coeff=varM[2]===''||varM[2]==='.'?1:parseFloat(varM[2]);vn=varM[3].toLowerCase();vc+=sign*coeff;continue;}
-    throw new Error('Kann "'+tok.replace(/^[+]/,'')+'" nicht parsen.');
-  }
-  return{vc:vc,cst:cst,vn:vn||'x'};
-}
-
+// TERME TERMWERT
+document.getElementById('tvTerm').addEventListener('input',detectVars);
+document.getElementById('btnTermwert').addEventListener('click',doTermwert);
 function detectVars(){
-  var term=document.getElementById('tvTerm').value;
-  var vars=[];var seen={};(term.match(/[a-z]/gi)||[]).forEach(function(v){v=v.toLowerCase();if(!seen[v]){seen[v]=1;vars.push(v);}});vars.sort();
+  var term=document.getElementById('tvTerm').value,seen={},vars=[];
+  (term.match(/[a-z]/gi)||[]).forEach(function(v){v=v.toLowerCase();if(!seen[v]){seen[v]=1;vars.push(v);}});vars.sort();
   var box=document.getElementById('tvVarsBox'),inp=document.getElementById('tvVarInputs');
   if(!vars.length){box.style.display='none';inp.innerHTML='';return;}
   box.style.display='block';
   inp.innerHTML=vars.map(function(v){return '<div style="display:flex;align-items:center;gap:10px"><span style="color:var(--accent4);font-weight:600;min-width:24px;font-size:16px">'+v+' =</span><input type="number" id="tv_'+v+'" placeholder="Wert für '+v+'" style="flex:1"></div>';}).join('');
 }
-
 function doTermwert(){
-  var termRaw=document.getElementById('tvTerm').value.trim();if(!termRaw)return;
-  var vars=[];var seen={};(termRaw.match(/[a-z]/gi)||[]).forEach(function(v){v=v.toLowerCase();if(!seen[v]){seen[v]=1;vars.push(v);}});vars.sort();
+  var tr=document.getElementById('tvTerm').value.trim();if(!tr)return;
+  var seen={},vars=[];(tr.match(/[a-z]/gi)||[]).forEach(function(v){v=v.toLowerCase();if(!seen[v]){seen[v]=1;vars.push(v);}});vars.sort();
   try{
     var sub={};
     for(var i=0;i<vars.length;i++){var v=vars[i],el=document.getElementById('tv_'+v);if(!el||el.value==='')throw new Error('Bitte Wert für "'+v+'" eingeben.');var val=parseFloat(el.value);if(isNaN(val))throw new Error('Ungültiger Wert für "'+v+'".');sub[v]=val;}
-    var expr=termRaw;
+    var expr=tr;
     expr=expr.replace(/sqrt/gi,'Math.sqrt');
     expr=expr.replace(/([a-z0-9\)]+)\^(\d+)/gi,function(_,b,e){return'Math.pow('+b+','+e+')';});
-    var sortedVars=vars.slice().sort(function(a,b){return b.length-a.length;});
-    for(var i=0;i<sortedVars.length;i++){var v=sortedVars[i];expr=expr.replace(new RegExp('(?<![a-zA-Z])'+v+'(?![a-zA-Z])','g'),sub[v]);}
+    vars.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(v){expr=expr.replace(new RegExp('(?<![A-Za-z])'+v+'(?![A-Za-z])','g'),sub[v]);});
     expr=expr.replace(/(\d)(\()/g,'$1*$2');
-    var result=Function('"use strict";return ('+expr+')')();
-    if(!isFinite(result))throw new Error('Ungültiger Termwert (Division durch 0?).');
-    document.getElementById('tvResult').style.display='block';document.getElementById('tvResult').className='rcard c4';
-    document.getElementById('tvVal').textContent=rnd(result);document.getElementById('tvSub').textContent='Eingesetzt: '+vars.map(function(v){return v+' = '+sub[v];}).join(' · ');
+    var result=Function('"use strict";return('+expr+')')();
+    if(!isFinite(result))throw new Error('Ungültiger Termwert.');
+    var rc=document.getElementById('tvResult');rc.style.display='block';rc.className='rcard c4';
+    document.getElementById('tvVal').textContent=rnd(result);
+    document.getElementById('tvSub').textContent='Eingesetzt: '+vars.map(function(v){return v+' = '+sub[v];}).join(' · ');
   }catch(e){showErr('tvResult','tvVal','tvSub',e.message);}
 }
 
-function showErr(cardId,valId,subId,msg){var el=document.getElementById(cardId);el.style.display='block';el.className='rcard cerr';document.getElementById(valId).textContent='⚠ '+msg;document.getElementById(subId).textContent='';}
-
-document.getElementById('eqInput').addEventListener('keydown',function(e){if(e.key==='Enter')doLoesen();});
-document.getElementById('tfInput').addEventListener('keydown',function(e){if(e.key==='Enter')doZusammenfassen();});
+})();
 </script>
 </body>
 </html>
