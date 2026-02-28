@@ -16,6 +16,7 @@
     --accent: #e8ff47;
     --accent2: #ff6b35;
     --accent3: #47b8ff;
+    --accent4: #b47fff;
     --text: #f0f0f5;
     --muted: #6b6b80;
   }
@@ -32,10 +33,10 @@
   body {
     display: flex;
     flex-direction: column;
-    height: 100dvh; /* dynamic viewport height for mobile */
+    height: 100dvh;
   }
 
-  /* ── TAB BAR (bottom) ── */
+  /* ── TAB BAR ── */
   .tab-bar {
     order: 2;
     display: flex;
@@ -47,15 +48,15 @@
 
   .tab {
     flex: 1;
-    padding: 10px 4px 8px;
+    padding: 10px 2px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 3px;
     font-family: 'Syne', sans-serif;
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--muted);
     cursor: pointer;
@@ -65,7 +66,7 @@
     transition: color 0.2s, border-color 0.2s;
   }
 
-  .tab .icon { font-size: 20px; line-height: 1; }
+  .tab .icon { font-size: 18px; line-height: 1; }
   .tab.active { color: var(--accent); border-top-color: var(--accent); }
 
   /* ── PAGES ── */
@@ -132,7 +133,6 @@
   .btn {
     background: var(--surface);
     border: none;
-    /* height fills remaining space equally */
     aspect-ratio: unset;
     height: calc((100dvh - env(safe-area-inset-bottom) - 57px - 90px - 1px) / 5);
     font-family: 'JetBrains Mono', monospace;
@@ -149,7 +149,6 @@
   }
 
   .btn:active { background: var(--surface2); }
-
   .btn.fn  { color: var(--muted); font-size: clamp(13px, 3.5vw, 17px); }
   .btn.op  { color: var(--accent); font-size: clamp(18px, 5vw, 26px); }
   .btn.eq  { background: var(--accent); color: #000; font-weight: 700; font-size: clamp(18px, 5vw, 26px); }
@@ -158,7 +157,7 @@
   .btn.clr { color: var(--accent2); }
 
   /* ════════════════════════════
-     STATISTIK
+     SCROLL PAGES
   ════════════════════════════ */
   .scroll-page {
     flex: 1;
@@ -225,6 +224,12 @@
     transition: opacity 0.15s;
   }
   .action-btn:active { opacity: 0.8; }
+  .action-btn.secondary {
+    background: transparent;
+    color: var(--accent4);
+    border: 1px solid var(--accent4);
+  }
+  .action-btn.secondary:active { opacity: 0.7; }
 
   .result-cards {
     display: flex;
@@ -257,6 +262,7 @@
     font-weight: 600;
     color: var(--accent);
     line-height: 1.2;
+    word-break: break-all;
   }
 
   .rcard.modal  .rcard-value { color: var(--accent2); }
@@ -343,6 +349,121 @@
     border-radius: 10px;
     padding: 10px 12px;
   }
+
+  /* ════════════════════════════
+     TERME
+  ════════════════════════════ */
+  .terme-tabs {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .terme-tab {
+    flex: 1;
+    padding: 8px 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .terme-tab.active {
+    background: rgba(180,127,255,0.12);
+    border-color: var(--accent4);
+    color: var(--accent4);
+  }
+
+  .terme-section { display: none; flex-direction: column; gap: 10px; }
+  .terme-section.active { display: flex; }
+
+  .var-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .var-row .field-wrap { flex: 1; }
+
+  .var-tag {
+    display: inline-block;
+    background: rgba(180,127,255,0.15);
+    border: 1px solid var(--accent4);
+    color: var(--accent4);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    margin: 2px 2px 0 0;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .var-tag:hover { background: rgba(180,127,255,0.3); }
+
+  .terme-result {
+    background: var(--surface2);
+    border: 1px solid var(--accent4);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .terme-result .rcard-label { color: var(--accent4); }
+  .terme-result .rcard-value { color: var(--accent4); font-size: 18px; word-break: break-all; }
+
+  .terme-result.error-card { border-color: var(--accent2); }
+  .terme-result.error-card .rcard-label { color: var(--accent2); }
+  .terme-result.error-card .rcard-value { color: var(--accent2); font-size: 13px; }
+
+  .eq-steps {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .eq-step {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .eq-step-num {
+    font-size: 9px;
+    color: var(--muted);
+    min-width: 16px;
+  }
+
+  .eq-step-text { color: var(--text); flex: 1; word-break: break-all; }
+  .eq-step-text.highlight { color: var(--accent4); font-weight: 600; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2px 0;
+  }
+
+  .info-box {
+    background: rgba(180,127,255,0.07);
+    border: 1px solid rgba(180,127,255,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .info-box strong { color: var(--accent4); }
 </style>
 </head>
 <body>
@@ -386,15 +507,12 @@
   <div class="page" id="page-stats">
     <div class="scroll-page">
       <div class="section-title">Statistische Auswertung</div>
-
       <div>
         <div class="field-label">Zahlenreihe</div>
         <input type="text" id="statInput" placeholder="z.B. 3, 7, 7, 2, 9" />
         <div class="field-hint">Komma oder Leerzeichen · Enter zum Berechnen</div>
       </div>
-
       <button class="action-btn" onclick="calcStats()">Berechnen</button>
-
       <div class="result-cards">
         <div class="rcard mean">
           <div class="rcard-label">Durchschnitt (Mittelwert)</div>
@@ -419,7 +537,6 @@
   <div class="page" id="page-compare">
     <div class="scroll-page">
       <div class="section-title">Zahlen Vergleichen</div>
-
       <div class="cmp-row">
         <div class="field-wrap">
           <div class="field-label">Zahl A</div>
@@ -431,11 +548,9 @@
           <input type="number" id="cmpB" placeholder="z.B. 99" oninput="doCompare()" />
         </div>
       </div>
-
       <div class="cmp-result-card" id="cmpResultCard">
         <div class="cmp-result-text" id="cmpResult">Gib zwei Zahlen ein</div>
       </div>
-
       <div class="cmp-grid" id="cmpExtra" style="display:none">
         <div class="cmp-card">
           <div class="rcard-label">Differenz (A − B)</div>
@@ -457,9 +572,90 @@
     </div>
   </div>
 
+  <!-- ── TERME ── -->
+  <div class="page" id="page-terme">
+    <div class="scroll-page">
+      <div class="section-title">Terme &amp; Gleichungen</div>
+
+      <!-- Sub-Tabs -->
+      <div class="terme-tabs">
+        <button class="terme-tab active" onclick="switchTermeTab('zusammenfassen')">Zusammen&shy;fassen</button>
+        <button class="terme-tab" onclick="switchTermeTab('loesen')">Gleichung lösen</button>
+        <button class="terme-tab" onclick="switchTermeTab('termwert')">Termwert</button>
+      </div>
+
+      <!-- ── 1. ZUSAMMENFASSEN ── -->
+      <div class="terme-section active" id="ts-zusammenfassen">
+        <div class="info-box">
+          <strong>Terme zusammenfassen</strong><br>
+          Gleiche Variablen werden addiert/subtrahiert.<br>
+          Beispiel: <strong>3x + 2x − x</strong> → <strong>4x</strong>
+        </div>
+        <div>
+          <div class="field-label">Term eingeben</div>
+          <input type="text" id="tfInput" placeholder="z.B. 3x + 2x - x + 5 - 2" />
+          <div class="field-hint">Variablen: a–z · Operatoren: + − · Koeffizient direkt vor Variable</div>
+        </div>
+        <button class="action-btn" style="background:var(--accent4);color:#000" onclick="doZusammenfassen()">Zusammenfassen</button>
+        <div id="tfResult" style="display:none" class="terme-result">
+          <div class="rcard-label">Vereinfachter Term</div>
+          <div class="rcard-value" id="tfVal">—</div>
+          <div class="rcard-sub" id="tfSub"></div>
+        </div>
+        <div id="tfSteps" class="eq-steps" style="display:none"></div>
+      </div>
+
+      <!-- ── 2. GLEICHUNG LÖSEN ── -->
+      <div class="terme-section" id="ts-loesen">
+        <div class="info-box">
+          <strong>Lineare Gleichung lösen</strong><br>
+          Forme nach der Variablen um.<br>
+          Beispiel: <strong>2x + 4 = 10</strong> → <strong>x = 3</strong>
+        </div>
+        <div>
+          <div class="field-label">Gleichung (eine Variable)</div>
+          <input type="text" id="eqInput" placeholder="z.B. 2x + 4 = 10" />
+          <div class="field-hint">Form: ax + b = c · oder · ax + b = cx + d</div>
+        </div>
+        <button class="action-btn" style="background:var(--accent4);color:#000" onclick="doLoesen()">Lösen</button>
+        <div id="eqResult" style="display:none" class="terme-result">
+          <div class="rcard-label">Lösung</div>
+          <div class="rcard-value" id="eqVal">—</div>
+          <div class="rcard-sub" id="eqSub"></div>
+        </div>
+        <div id="eqSteps" class="eq-steps" style="display:none"></div>
+      </div>
+
+      <!-- ── 3. TERMWERT ── -->
+      <div class="terme-section" id="ts-termwert">
+        <div class="info-box">
+          <strong>Term definieren &amp; Termwert berechnen</strong><br>
+          Definiere einen Term mit Variablen, setze Werte ein.<br>
+          Beispiel: <strong>2x² + 3y − 1</strong> mit x=3, y=2 → <strong>23</strong>
+        </div>
+        <div>
+          <div class="field-label">Term definieren</div>
+          <input type="text" id="tvTerm" placeholder="z.B. 2*x^2 + 3*y - 1" oninput="detectVars()" />
+          <div class="field-hint">Potenz: x^2 · Multiplikation: 2*x oder 2x · Wurzel: sqrt(x)</div>
+        </div>
+        <div id="tvVarsBox" style="display:none">
+          <div class="field-label">Variablenwerte</div>
+          <div id="tvVarInputs" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+        <button class="action-btn" style="background:var(--accent4);color:#000" onclick="doTermwert()">Termwert berechnen</button>
+        <div id="tvResult" style="display:none" class="terme-result">
+          <div class="rcard-label">Termwert</div>
+          <div class="rcard-value" id="tvVal">—</div>
+          <div class="rcard-sub" id="tvSub"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div><!-- /pages -->
 
-<!-- ── TAB BAR (bottom) ── -->
+<!-- ── TAB BAR ── -->
 <div class="tab-bar">
   <button class="tab active" id="tab-calc" onclick="switchTab('calc')">
     <span class="icon">🔢</span>Rechner
@@ -470,14 +666,29 @@
   <button class="tab" id="tab-compare" onclick="switchTab('compare')">
     <span class="icon">⚖️</span>Vergleichen
   </button>
+  <button class="tab" id="tab-terme" onclick="switchTab('terme')">
+    <span class="icon">🔣</span>Terme
+  </button>
 </div>
 
 <script>
 // ── TABS ──
+const allTabs = ['calc','stats','compare','terme'];
+
 function switchTab(tab) {
-  ['calc','stats','compare'].forEach(t => {
+  allTabs.forEach(t => {
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
     document.getElementById('page-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+// ── TERME SUB-TABS ──
+const termeTabs = ['zusammenfassen','loesen','termwert'];
+
+function switchTermeTab(tab) {
+  termeTabs.forEach(t => {
+    document.querySelector(`.terme-tab:nth-child(${termeTabs.indexOf(t)+1})`).classList.toggle('active', t===tab);
+    document.getElementById('ts-'+t).classList.toggle('active', t===tab);
   });
 }
 
@@ -549,10 +760,6 @@ document.addEventListener('keydown',e=>{
 });
 
 // ── STATS ──
-function parseNums(str){
-  return str.split(/[\s,;]+/).map(s=>parseFloat(s.replace(',','.'))).filter(n=>!isNaN(n));
-}
-
 function calcStats(){
   const raw=document.getElementById('statInput').value.trim();
   if(!raw) return;
@@ -628,13 +835,284 @@ function doCompare(){
 
 function rnd(n){ return parseFloat(n.toPrecision(10)).toString(); }
 
-// Vollbild beim ersten Antippen
-document.addEventListener('click', function goFS() {
-  const el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen();
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  document.removeEventListener('click', goFS);
-}, { once: true });
+// ════════════════════════════════════════
+// TERME LOGIK
+// ════════════════════════════════════════
+
+// ── 1. TERME ZUSAMMENFASSEN ──
+// Parst einen Term der Form: koeffizient*variable^exponent + ...
+// Unterstützt rein lineare Terme (z.B. 3x + 2x - x + 5)
+
+function doZusammenfassen() {
+  const raw = document.getElementById('tfInput').value.trim();
+  if (!raw) return;
+
+  try {
+    const { terms, steps } = parseTerm(raw);
+    const simplified = buildSimplified(terms);
+    const stepsHTML = buildStepsHTML(steps, simplified);
+
+    const res = document.getElementById('tfResult');
+    res.style.display = 'block';
+    res.className = 'terme-result';
+    document.getElementById('tfVal').textContent = simplified.result;
+    document.getElementById('tfSub').textContent = simplified.sub;
+
+    const stepsEl = document.getElementById('tfSteps');
+    stepsEl.style.display = 'flex';
+    stepsEl.innerHTML = stepsHTML;
+  } catch(e) {
+    showTermeError('tfResult', 'tfVal', 'tfSub', e.message);
+    document.getElementById('tfSteps').style.display = 'none';
+  }
+}
+
+function parseTerm(raw) {
+  // Normalize: remove spaces, handle implicit multiplication like 3x → 3*x
+  let s = raw.trim();
+  // normalize minus signs at start
+  if (s[0] !== '-') s = '+' + s;
+  // split by + or - keeping the sign
+  const tokenRe = /([+\-][^+\-]*)/g;
+  const tokens = s.match(tokenRe) || [];
+
+  const coeffMap = {}; // variable^exp -> coefficient sum
+  const constKey = '__const__';
+  const steps = ['Ausgangterm: ' + raw];
+
+  for (const tok of tokens) {
+    const t = tok.replace(/\s+/g, '');
+    if (!t || t === '+' || t === '-') continue;
+
+    // try to parse as number (constant)
+    const numMatch = t.match(/^([+\-]?\d*\.?\d+)$/);
+    if (numMatch) {
+      coeffMap[constKey] = (coeffMap[constKey] || 0) + parseFloat(numMatch[1]);
+      continue;
+    }
+
+    // try: [+/-][coeff]var
+    // e.g. +3x, -2y, +x, -x
+    const varMatch = t.match(/^([+\-]?)(\d*\.?\d*)\*?([a-z])$/i);
+    if (varMatch) {
+      const sign = varMatch[1] === '-' ? -1 : 1;
+      const coeff = varMatch[2] === '' || varMatch[2] === '.' ? 1 : parseFloat(varMatch[2]);
+      const varName = varMatch[3].toLowerCase();
+      coeffMap[varName] = (coeffMap[varName] || 0) + sign * coeff;
+      steps.push(`Koeffizient von ${varName}: ${sign > 0 ? '+' : ''}${sign * coeff}`);
+      continue;
+    }
+
+    throw new Error(`Kann "${t.replace(/^[+]/,'')" nicht parsen. Bitte einfache Terme (z.B. 3x + 2x) eingeben.`);
+  }
+
+  return { terms: coeffMap, steps };
+}
+
+function buildSimplified(coeffMap) {
+  const constKey = '__const__';
+  let parts = [];
+  const varKeys = Object.keys(coeffMap).filter(k => k !== constKey).sort();
+
+  for (const v of varKeys) {
+    const c = coeffMap[v];
+    if (c === 0) continue;
+    if (c === 1) parts.push(`${parts.length > 0 ? '+' : ''}x`.replace('x', v));
+    else if (c === -1) parts.push(`-${v}`);
+    else parts.push(`${c > 0 && parts.length > 0 ? '+' : ''}${c}${v}`);
+  }
+
+  const cst = coeffMap[constKey] || 0;
+  if (cst !== 0) parts.push(`${cst > 0 && parts.length > 0 ? '+' : ''}${cst}`);
+
+  const result = parts.length ? parts.join(' ').replace(/\s*([+\-])\s*/g, ' $1 ').trim() : '0';
+  const sub = varKeys.map(v => `${v}: ${coeffMap[v]}`).join(' · ') + (cst !== 0 ? ` · Konstante: ${cst}` : '');
+  return { result, sub };
+}
+
+function buildStepsHTML(steps, simplified) {
+  let html = '';
+  steps.forEach((s, i) => {
+    html += `<div class="eq-step"><span class="eq-step-num">${i+1}.</span><span class="eq-step-text">${s}</span></div>`;
+  });
+  html += `<div class="divider"></div>`;
+  html += `<div class="eq-step"><span class="eq-step-num">→</span><span class="eq-step-text highlight">${simplified.result}</span></div>`;
+  return html;
+}
+
+// ── 2. GLEICHUNG LÖSEN (linear, eine Variable) ──
+
+function doLoesen() {
+  const raw = document.getElementById('eqInput').value.trim();
+  if (!raw) return;
+
+  try {
+    const eqParts = raw.split('=');
+    if (eqParts.length !== 2) throw new Error('Bitte eine Gleichung mit genau einem "=" eingeben.');
+
+    const left = eqParts[0].trim();
+    const right = eqParts[1].trim();
+
+    // Parse both sides into {varCoeff, constant}
+    const L = parseSide(left);
+    const R = parseSide(right);
+
+    const varCoeff = L.varCoeff - R.varCoeff; // move var terms to left
+    const constant = R.constant - L.constant;  // move constants to right
+
+    const steps = [];
+    steps.push({ text: `Ausganggleichung: ${raw}` });
+    steps.push({ text: `Linke Seite: ${L.varCoeff !== 0 ? L.varCoeff + L.varName : ''}${L.constant !== 0 ? (L.constant > 0 && L.varCoeff !== 0 ? ' + ' : ' ') + L.constant : ''}` });
+    steps.push({ text: `Rechte Seite: ${R.varCoeff !== 0 ? R.varCoeff + R.varName : ''}${R.constant !== 0 ? (R.constant > 0 && R.varCoeff !== 0 ? ' + ' : ' ') + R.constant : ''}` });
+
+    const varName = L.varName || R.varName;
+
+    if (varCoeff === 0) {
+      if (constant === 0) {
+        throw new Error('Unendlich viele Lösungen (wahre Aussage).');
+      } else {
+        throw new Error('Keine Lösung (widersprüchliche Gleichung).');
+      }
+    }
+
+    steps.push({ text: `Variable auf eine Seite: ${varCoeff}${varName} = ${constant}` });
+    const solution = constant / varCoeff;
+    steps.push({ text: `÷ ${varCoeff} auf beiden Seiten`, highlight: true });
+    steps.push({ text: `${varName} = ${rnd(solution)}`, highlight: true });
+
+    const res = document.getElementById('eqResult');
+    res.style.display = 'block';
+    res.className = 'terme-result';
+    document.getElementById('eqVal').textContent = `${varName} = ${rnd(solution)}`;
+    document.getElementById('eqSub').textContent = `Probe: ${formatSide(L, solution)} = ${formatSide(R, solution)}`;
+
+    const stepsEl = document.getElementById('eqSteps');
+    stepsEl.style.display = 'flex';
+    stepsEl.innerHTML = steps.map((s, i) =>
+      `<div class="eq-step"><span class="eq-step-num">${i+1}.</span><span class="eq-step-text ${s.highlight ? 'highlight' : ''}">${s.text}</span></div>`
+    ).join('');
+
+  } catch(e) {
+    showTermeError('eqResult', 'eqVal', 'eqSub', e.message);
+    document.getElementById('eqSteps').style.display = 'none';
+  }
+}
+
+function parseSide(s) {
+  // Parse ax + b or b into {varCoeff, constant, varName}
+  s = s.replace(/\s+/g, '');
+  if (s[0] !== '-') s = '+' + s;
+
+  const tokens = s.match(/[+\-][^+\-]*/g) || [];
+  let varCoeff = 0, constant = 0, varName = null;
+
+  for (const tok of tokens) {
+    // constant
+    const numM = tok.match(/^([+\-]?\d*\.?\d+)$/);
+    if (numM) { constant += parseFloat(numM[0]); continue; }
+
+    // var term
+    const varM = tok.match(/^([+\-]?)(\d*\.?\d*)\*?([a-z])$/i);
+    if (varM) {
+      const sign = varM[1] === '-' ? -1 : 1;
+      const coeff = varM[2] === '' || varM[2] === '.' ? 1 : parseFloat(varM[2]);
+      varName = varM[3].toLowerCase();
+      varCoeff += sign * coeff;
+      continue;
+    }
+
+    throw new Error(`Kann "${tok.replace(/^[+]/,'')}" nicht parsen. Nur lineare Terme (ax + b).`);
+  }
+
+  return { varCoeff, constant, varName: varName || 'x' };
+}
+
+function formatSide(side, value) {
+  const val = side.varCoeff * value + side.constant;
+  return rnd(val);
+}
+
+// ── 3. TERMWERT ──
+
+function detectVars() {
+  const term = document.getElementById('tvTerm').value;
+  const vars = [...new Set((term.match(/[a-z]/gi) || []).map(v => v.toLowerCase()))].sort();
+
+  const box = document.getElementById('tvVarsBox');
+  const inputs = document.getElementById('tvVarInputs');
+
+  if (vars.length === 0) { box.style.display = 'none'; inputs.innerHTML = ''; return; }
+  box.style.display = 'block';
+  inputs.innerHTML = vars.map(v => `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="color:var(--accent4);font-weight:600;min-width:20px;font-size:16px;">${v} =</span>
+      <input type="number" id="tv_${v}" placeholder="Wert für ${v}" style="flex:1" />
+    </div>
+  `).join('');
+}
+
+function doTermwert() {
+  const termRaw = document.getElementById('tvTerm').value.trim();
+  if (!termRaw) return;
+
+  const vars = [...new Set((termRaw.match(/[a-z]/gi) || []).map(v => v.toLowerCase()))].sort();
+
+  try {
+    // Build substitution map
+    const subMap = {};
+    for (const v of vars) {
+      const el = document.getElementById('tv_'+v);
+      if (!el || el.value === '') throw new Error(`Bitte Wert für "${v}" eingeben.`);
+      const val = parseFloat(el.value);
+      if (isNaN(val)) throw new Error(`Ungültiger Wert für "${v}".`);
+      subMap[v] = val;
+    }
+
+    // Replace vars in term
+    let expr = termRaw;
+    // handle sqrt
+    expr = expr.replace(/sqrt/gi, 'Math.sqrt');
+    // handle ^ for powers
+    expr = expr.replace(/([a-z0-9\)]+)\^(\d+)/gi, (_, base, exp) => {
+      // replace var if needed
+      return `Math.pow(${base},${exp})`;
+    });
+    // replace variables with values (longest first to avoid partial replace)
+    for (const v of vars.sort((a,b) => b.length - a.length)) {
+      expr = expr.replace(new RegExp('(?<![a-zA-Z])' + v + '(?![a-zA-Z])', 'g'), subMap[v]);
+    }
+    // implicit multiplication: 2(... → 2*(
+    expr = expr.replace(/(\d)(\()/g, '$1*$2');
+
+    const result = Function('"use strict"; return (' + expr + ')')();
+
+    if (!isFinite(result)) throw new Error('Ungültiger Termwert (Division durch 0?).');
+
+    const sub = vars.map(v => `${v} = ${subMap[v]}`).join(' · ');
+
+    const res = document.getElementById('tvResult');
+    res.style.display = 'block';
+    res.className = 'terme-result';
+    document.getElementById('tvVal').textContent = rnd(result);
+    document.getElementById('tvSub').textContent = `Eingesetzt: ${sub}`;
+
+  } catch(e) {
+    showTermeError('tvResult', 'tvVal', 'tvSub', e.message);
+  }
+}
+
+function showTermeError(cardId, valId, subId, msg) {
+  const res = document.getElementById(cardId);
+  res.style.display = 'block';
+  res.className = 'terme-result error-card';
+  document.getElementById(valId).textContent = '⚠ ' + msg;
+  document.getElementById(subId).textContent = '';
+}
+
+document.getElementById('eqInput').addEventListener('keydown', e => { if(e.key==='Enter') doLoesen(); });
+document.getElementById('tfInput').addEventListener('keydown', e => { if(e.key==='Enter') doZusammenfassen(); });
+
+
 </script>
 </body>
 </html>
