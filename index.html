@@ -149,6 +149,35 @@ input:focus { border-color: var(--accent); }
 .eq-step-t { color: var(--text); flex: 1; word-break: break-all; }
 .eq-step-t.hi { color: var(--accent4); font-weight: 600; }
 .divider { height: 1px; background: var(--border); margin: 2px 0; }
+
+/* GRUNDMENGE */
+.gm-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+.gm-btn {
+  padding: 6px 12px; border-radius: 7px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s;
+}
+.gm-btn.active { background: rgba(180,127,255,0.15); border-color: var(--accent4); color: var(--accent4); font-weight: 600; }
+.gm-badge {
+  display: inline-block; background: rgba(180,127,255,0.12);
+  border: 1px solid var(--accent4); color: var(--accent4);
+  border-radius: 5px; padding: 1px 7px; font-size: 11px; margin-left: 6px; vertical-align: middle;
+}
+.gm-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
+.gm-btn {
+  padding: 7px 12px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s;
+}
+.gm-btn.active { background: rgba(180,127,255,0.15); border-color: var(--accent4); color: var(--accent4); }
+.gm-badge {
+  display: inline-block; background: rgba(180,127,255,0.15); border: 1px solid var(--accent4);
+  color: var(--accent4); border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600;
+}
 </style>
 </head>
 <body>
@@ -269,7 +298,19 @@ input:focus { border-color: var(--accent); }
         <div>
           <div class="field-label">Gleichung (eine Variable)</div>
           <input type="text" id="eqInput" placeholder="z.B. 2x + 4 = 10">
-          <div class="field-hint">Form: ax + b = c &nbsp;oder&nbsp; ax + b = cx + d</div>
+          <div class="field-hint">Form: ax + b = c oder ax + b = cx + d</div>
+        </div>
+        <div>
+          <div class="field-label">Grundmenge (G)</div>
+          <div class="gm-row" id="eqGmRow">
+            <button class="gm-btn active" data-gm="R">&#8477;</button>
+            <button class="gm-btn" data-gm="Q">&#8474;</button>
+            <button class="gm-btn" data-gm="Z">&#8484;</button>
+            <button class="gm-btn" data-gm="N">&#8469;</button>
+            <button class="gm-btn" data-gm="custom">eigene</button>
+          </div>
+          <input type="text" id="eqGmCustom" placeholder="z.B. 1, 2, 3, 4, 5" style="display:none;margin-top:6px">
+          <div class="field-hint" id="eqGmHint">G = &#8477; (alle reellen Zahlen)</div>
         </div>
         <button class="action-btn purple" id="btnLoesen">L&ouml;sen</button>
         <div class="rcard c4" id="eqResult" style="display:none">
@@ -280,22 +321,26 @@ input:focus { border-color: var(--accent); }
         <div class="eq-steps" id="eqSteps" style="display:none"></div>
       </div>
       <div class="tsec" id="ts-t">
-        <div class="info-box"><strong>Term definieren &amp; Termwert berechnen</strong><br>z.B. <strong>2*x^2 + 3*y &#8722; 1</strong> mit x=3, y=2 &rarr; <strong>23</strong></div>
+        <div class="info-box"><strong>Termwert berechnen</strong><br>Gib einen Term in <strong>x</strong> ein und w&auml;hle die Grundmenge. Der Term wird f&uuml;r jeden x-Wert ausgewertet.<br>z.B. <strong>2x + 1</strong>, G = {1, 2, 3} &rarr; 3, 5, 7</div>
         <div>
-          <div class="field-label">Term definieren</div>
-          <input type="text" id="tvTerm" placeholder="z.B. 2*x^2 + 3*y - 1">
-          <div class="field-hint">Potenz: x^2 &middot; Multiplikation: 2*x &middot; Wurzel: sqrt(x)</div>
+          <div class="field-label">Term (in x)</div>
+          <input type="text" id="tvTerm" placeholder="z.B. 2*x + 1 oder x^2 - 3">
+          <div class="field-hint">Potenz: x^2 &middot; Multiplikation: 2*x oder 2x &middot; Wurzel: sqrt(x)</div>
         </div>
-        <div id="tvVarsBox" style="display:none">
-          <div class="field-label">Variablenwerte</div>
-          <div id="tvVarInputs" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <div>
+          <div class="field-label">Grundmenge G</div>
+          <div class="gm-row" id="tvGmRow">
+            <button class="gm-btn active" data-gm="custom">eigene</button>
+            <button class="gm-btn" data-gm="N">&#8469;</button>
+            <button class="gm-btn" data-gm="Z">&#8484;</button>
+            <button class="gm-btn" data-gm="Q">&#8474;</button>
+            <button class="gm-btn" data-gm="R">&#8477;</button>
+          </div>
+          <input type="text" id="tvGmCustom" placeholder="z.B. -2, 0, 1, 3, 5" style="margin-top:6px">
+          <div class="field-hint" id="tvGmHint">Eigene x-Werte eingeben</div>
         </div>
         <button class="action-btn purple" id="btnTermwert">Termwert berechnen</button>
-        <div class="rcard c4" id="tvResult" style="display:none">
-          <div class="rcard-label">Termwert</div>
-          <div class="rcard-value" id="tvVal">&#8212;</div>
-          <div class="rcard-sub" id="tvSub"></div>
-        </div>
+        <div id="tvResult" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -303,7 +348,7 @@ input:focus { border-color: var(--accent); }
 </div>
 
 <div class="tab-bar">
-  <button class="tab active" id="tab-calc"><span class="icon">🔢</span>Rechner</button>
+  <button class="tab active" id="tab-calc"><span class="icon">&#128178;</span>Rechner</button>
   <button class="tab" id="tab-stats"><span class="icon">&#128202;</span>Statistik</button>
   <button class="tab" id="tab-compare"><span class="icon">&#9878;</span>Vergleichen</button>
   <button class="tab" id="tab-terme"><span class="icon">&#128291;</span>Terme</button>
@@ -447,6 +492,55 @@ function doZusammen(){
   }catch(e){showErr('tfResult','tfVal','tfSub',e.message);document.getElementById('tfSteps').style.display='none';}
 }
 
+// GRUNDMENGE HELPER
+var gmLabels={'R':'G = \u211d (alle reellen Zahlen)','Q':'G = \u211a (rationale Zahlen)','Z':'G = \u2124 (ganze Zahlen)','N':'G = \u2115 (nat\u00fcrliche Zahlen \u2265 0)','custom':'Eigene Menge'};
+
+function setupGmRow(rowId,customId,hintId){
+  var row=document.getElementById(rowId);
+  var customEl=document.getElementById(customId);
+  var hintEl=document.getElementById(hintId);
+  var current='R';
+  row.addEventListener('click',function(e){
+    var btn=e.target.closest('.gm-btn');if(!btn)return;
+    var gm=btn.getAttribute('data-gm');current=gm;
+    row.querySelectorAll('.gm-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-gm')===gm);});
+    customEl.style.display=gm==='custom'?'block':'none';
+    hintEl.textContent=gmLabels[gm]||'';
+  });
+  return function(){ return current; };
+}
+
+function getGm(getType,customId){
+  var t=getType();
+  if(t==='R')return{type:'R'};
+  if(t==='Q')return{type:'Q'};
+  if(t==='Z')return{type:'Z'};
+  if(t==='N')return{type:'N'};
+  if(t==='custom'){
+    var raw=document.getElementById(customId).value;
+    var nums=raw.split(/[\s,;]+/).map(function(s){return parseFloat(s.replace(',','.'));}).filter(function(n){return!isNaN(n);});
+    if(!nums.length)throw new Error('Bitte eigene Grundmenge eingeben (z.B. 1, 2, 3).');
+    return{type:'custom',vals:nums};
+  }
+  return{type:'R'};
+}
+
+function checkInGm(n,gm){
+  if(gm.type==='R')return true;
+  if(gm.type==='Q')return isFinite(n);
+  if(gm.type==='Z')return Number.isFinite(n)&&Math.abs(n-Math.round(n))<1e-9;
+  if(gm.type==='N')return Number.isFinite(n)&&Math.abs(n-Math.round(n))<1e-9&&n>=0;
+  if(gm.type==='custom')return gm.vals.some(function(v){return Math.abs(v-n)<1e-9;});
+  return true;
+}
+
+function gmName(gm){
+  if(gm.type==='custom')return '{'+gm.vals.join(', ')+'}';
+  return{R:'\u211d',Q:'\u211a',Z:'\u2124',N:'\u2115'}[gm.type]||'\u211d';
+}
+
+var getEqGm=setupGmRow('eqGmRow','eqGmCustom','eqGmHint');
+
 // TERME GLEICHUNG LÖSEN
 document.getElementById('btnLoesen').addEventListener('click',doLoesen);
 document.getElementById('eqInput').addEventListener('keydown',function(e){if(e.key==='Enter')doLoesen();});
@@ -465,48 +559,130 @@ function parseSide(s){
 function doLoesen(){
   var raw=document.getElementById('eqInput').value.trim();if(!raw)return;
   try{
+    var gm=getGm(getEqGm,'eqGmCustom');
     var pts=raw.split('=');if(pts.length!==2)throw new Error('Genau ein "=" erforderlich.');
     var L=parseSide(pts[0].trim()),R=parseSide(pts[1].trim()),vc=L.vc-R.vc,cc=R.cc-L.cc,vn=L.vn||R.vn;
-    var steps=[{t:'Ausgangsgleichung: '+raw},{t:'Variable auf eine Seite: '+vc+vn+' = '+cc}];
-    if(vc===0)throw new Error(cc===0?'Unendlich viele Lösungen.':'Keine Lösung.');
-    var sol=cc/vc;steps.push({t:'÷ '+vc+' auf beiden Seiten',hi:true});steps.push({t:vn+' = '+rnd(sol),hi:true});
-    var rc=document.getElementById('eqResult');rc.style.display='block';rc.className='rcard c4';
-    document.getElementById('eqVal').textContent=vn+' = '+rnd(sol);
-    document.getElementById('eqSub').textContent='Probe: '+rnd(L.vc*sol+L.cc)+' = '+rnd(R.vc*sol+R.cc);
+    var steps=[{t:'Ausgangsgleichung: '+raw},{t:'Grundmenge: G = '+gmName(gm)},{t:'Variable auf eine Seite: '+vc+vn+' = '+cc}];
+    if(vc===0)throw new Error(cc===0?'Unendlich viele Lösungen (L = G).':'Keine Lösung (L = \u2205).');
+    var sol=cc/vc;
+    steps.push({t:'\u00f7 '+vc+' auf beiden Seiten',hi:true});
+    steps.push({t:vn+' = '+rnd(sol),hi:true});
+    var inGm=checkInGm(sol,gm);
+    steps.push({t:inGm?rnd(sol)+' \u2208 '+gmName(gm)+' \u2713':rnd(sol)+' \u2209 '+gmName(gm)+' \u2192 L = \u2205',hi:true});
+    var rc=document.getElementById('eqResult');rc.style.display='block';rc.className='rcard '+(inGm?'c4':'c2');
+    if(inGm){
+      document.getElementById('eqVal').textContent=vn+' = '+rnd(sol);
+      document.getElementById('eqSub').textContent='L = {'+rnd(sol)+'} \u2286 G \u2713  |  Probe: '+rnd(L.vc*sol+L.cc)+' = '+rnd(R.vc*sol+R.cc);
+    }else{
+      document.getElementById('eqVal').textContent='L = \u2205';
+      document.getElementById('eqSub').textContent=rnd(sol)+' liegt nicht in G = '+gmName(gm);
+    }
     var st=document.getElementById('eqSteps');st.style.display='flex';
     st.innerHTML=steps.map(function(s,i){return '<div class="eq-step"><span class="eq-step-n">'+(i+1)+'.</span><span class="eq-step-t '+(s.hi?'hi':'')+'">'+s.t+'</span></div>';}).join('');
   }catch(e){showErr('eqResult','eqVal','eqSub',e.message);document.getElementById('eqSteps').style.display='none';}
 }
 
 // TERME TERMWERT
-document.getElementById('tvTerm').addEventListener('input',detectVars);
-document.getElementById('btnTermwert').addEventListener('click',doTermwert);
-function detectVars(){
-  var term=document.getElementById('tvTerm').value,seen={},vars=[];
-  (term.match(/[a-z]/gi)||[]).forEach(function(v){v=v.toLowerCase();if(!seen[v]){seen[v]=1;vars.push(v);}});vars.sort();
-  var box=document.getElementById('tvVarsBox'),inp=document.getElementById('tvVarInputs');
-  if(!vars.length){box.style.display='none';inp.innerHTML='';return;}
-  box.style.display='block';
-  inp.innerHTML=vars.map(function(v){return '<div style="display:flex;align-items:center;gap:10px"><span style="color:var(--accent4);font-weight:600;min-width:24px;font-size:16px">'+v+' =</span><input type="number" id="tv_'+v+'" placeholder="Wert für '+v+'" style="flex:1"></div>';}).join('');
+document.getElementById('btnTermwert').addEventListener('click', doTermwert);
+
+var tvGmRow = document.getElementById('tvGmRow');
+var tvGmCustom = document.getElementById('tvGmCustom');
+var tvGmHint = document.getElementById('tvGmHint');
+var tvGmHints = {
+  'custom': 'Eigene x-Werte eingeben, z.B. -2, 0, 1, 3',
+  'N': '\u2115 = {0, 1, 2, 3, \u2026} \u2014 Werte eingeben, z.B. 0, 1, 2, 3, 4',
+  'Z': '\u2124 = {\u2026, -2, -1, 0, 1, 2, \u2026} \u2014 Werte eingeben, z.B. -3, -2, -1, 0, 1, 2, 3',
+  'Q': '\u211a \u2014 rationale x-Werte eingeben, z.B. 0.5, 1, 1.5, 2',
+  'R': '\u211d \u2014 beliebige x-Werte eingeben, z.B. 0, 1.5, 3.14'
+};
+
+tvGmRow.addEventListener('click', function(e) {
+  var btn = e.target.closest('.gm-btn');
+  if (!btn) return;
+  var gm = btn.getAttribute('data-gm');
+  tvGmRow.querySelectorAll('.gm-btn').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-gm') === gm); });
+  tvGmHint.textContent = tvGmHints[gm] || '';
+});
+
+function parseXVals() {
+  var raw = tvGmCustom.value.trim();
+  if (!raw) throw new Error('Bitte x-Werte eingeben (z.B. 1, 2, 3).');
+  var vals = raw.split(/[\s,;]+/).map(function(s) { return parseFloat(s.replace(',', '.')); }).filter(function(n) { return !isNaN(n); });
+  if (!vals.length) throw new Error('Keine gültigen Zahlen erkannt.');
+
+  var active = tvGmRow.querySelector('.gm-btn.active');
+  var gmType = active ? active.getAttribute('data-gm') : 'custom';
+
+  if (gmType === 'N') {
+    var bad = vals.filter(function(v) { return v < 0 || Math.round(v) !== v; });
+    if (bad.length) throw new Error('\u2115 enthält nur nat\u00FCrliche Zahlen \u2265 0. Ungültig: ' + bad.join(', '));
+  }
+  if (gmType === 'Z') {
+    var bad = vals.filter(function(v) { return Math.abs(v - Math.round(v)) > 1e-9; });
+    if (bad.length) throw new Error('\u2124 enthält nur ganze Zahlen. Ungültig: ' + bad.join(', '));
+  }
+  return vals;
 }
-function doTermwert(){
-  var tr=document.getElementById('tvTerm').value.trim();if(!tr)return;
-  var seen={},vars=[];(tr.match(/[a-z]/gi)||[]).forEach(function(v){v=v.toLowerCase();if(!seen[v]){seen[v]=1;vars.push(v);}});vars.sort();
-  try{
-    var sub={};
-    for(var i=0;i<vars.length;i++){var v=vars[i],el=document.getElementById('tv_'+v);if(!el||el.value==='')throw new Error('Bitte Wert für "'+v+'" eingeben.');var val=parseFloat(el.value);if(isNaN(val))throw new Error('Ungültiger Wert für "'+v+'".');sub[v]=val;}
-    var expr=tr;
-    expr=expr.replace(/sqrt/gi,'Math.sqrt');
-    expr=expr.replace(/([a-z0-9\)]+)\^(\d+)/gi,function(_,b,e){return'Math.pow('+b+','+e+')';});
-    vars.slice().sort(function(a,b){return b.length-a.length;}).forEach(function(v){expr=expr.replace(new RegExp('(?<![A-Za-z])'+v+'(?![A-Za-z])','g'),sub[v]);});
-    expr=expr.replace(/(\d)(\()/g,'$1*$2');
-    var result=Function('"use strict";return('+expr+')')();
-    if(!isFinite(result))throw new Error('Ungültiger Termwert.');
-    var rc=document.getElementById('tvResult');rc.style.display='block';rc.className='rcard c4';
-    document.getElementById('tvVal').textContent=rnd(result);
-    document.getElementById('tvSub').textContent='Eingesetzt: '+vars.map(function(v){return v+' = '+sub[v];}).join(' · ');
-  }catch(e){showErr('tvResult','tvVal','tvSub',e.message);}
+
+function evalTermX(termRaw, x) {
+  var expr = termRaw;
+  // sqrt
+  expr = expr.replace(/sqrt/gi, 'Math.sqrt');
+  // powers: x^2 → Math.pow(x,2)
+  expr = expr.replace(/([x\d\)]+)\^(\d+(?:\.\d+)?)/gi, function(_, b, e) { return 'Math.pow(' + b + ',' + e + ')'; });
+  // implicit multiply: 2x → 2*x
+  expr = expr.replace(/(\d)(x)/gi, '$1*x');
+  // replace x with value (not inside word)
+  expr = expr.replace(/\bx\b/g, '(' + x + ')');
+  // implicit: 2(... → 2*(
+  expr = expr.replace(/(\d)\(/g, '$1*(');
+  return Function('"use strict"; return (' + expr + ')')();
 }
+
+function doTermwert() {
+  var term = document.getElementById('tvTerm').value.trim();
+  var resBox = document.getElementById('tvResult');
+  resBox.style.display = 'none';
+  if (!term) return;
+
+  try {
+    var xVals = parseXVals();
+
+    var rows = xVals.map(function(x) {
+      try {
+        var r = evalTermX(term, x);
+        return { x: x, r: isFinite(r) ? r : null, err: isFinite(r) ? null : 'n. def.' };
+      } catch(e) {
+        return { x: x, r: null, err: 'Fehler' };
+      }
+    });
+
+    var html = '<div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">T(x) = ' + esc(term) + '</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:5px;">';
+
+    rows.forEach(function(row) {
+      var ok = row.err === null;
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;'
+        + 'background:var(--surface2);border:1px solid ' + (ok ? 'var(--accent4)' : 'var(--border)') + ';'
+        + 'border-radius:8px;padding:9px 14px;">'
+        + '<span style="font-size:15px;color:var(--muted)">x = <strong style="color:var(--text)">' + row.x + '</strong></span>'
+        + '<span style="font-size:13px;color:var(--muted)">&rarr;</span>'
+        + '<span style="font-size:18px;font-weight:600;color:' + (ok ? 'var(--accent4)' : 'var(--accent2)') + '">'
+        + (ok ? rnd(row.r) : row.err) + '</span>'
+        + '</div>';
+    });
+
+    html += '</div>';
+    resBox.style.display = 'block';
+    resBox.innerHTML = html;
+
+  } catch(e) {
+    resBox.style.display = 'block';
+    resBox.innerHTML = '<div class="rcard c2"><div class="rcard-value" style="font-size:14px">\u26a0 ' + e.message + '</div></div>';
+  }
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 })();
 </script>
